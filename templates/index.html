@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Keyword Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .results {
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .results h2 {
+            margin-top: 0;
+        }
+        .results ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .results li {
+            background: #f9f9f9;
+            margin-bottom: 5px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .results strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Keyword Tool</h1>
+    
+    <form method="post" action="/">
+        <label for="keywords">Enter keywords (comma separated):</label>
+        <input type="text" id="keywords" name="keywords" required>
+        
+        <label for="country">Select country:</label>
+        <select id="country" name="country" required>
+            <option value="">Select Country</option>
+            <option value="US">USA</option>
+            <option value="LK">Sri Lanka</option>
+        </select>
+        
+        <button type="submit">Fetch Data</button>
+    </form>
+    
+    {% if data %}
+        <div class="results">
+            <h2>Results</h2>
+            <ul>
+                {% for item in data %}
+                    <li>
+                        <strong>Keyword: {{ item.keyword }}</strong>
+                        <strong>Rising Queries:</strong>
+                        <ul>
+                            {% for query in item.rising %}
+                                <li>{{ query.query }} - {{ query.value }}</li>
+                            {% endfor %}
+                        </ul>
+                        <strong>Top Queries:</strong>
+                        <ul>
+                            {% for query in item.top %}
+                                <li>{{ query.query }} - {{ query.value }}</li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                {% endfor %}
+            </ul>
+            <form method="post" action="/export">
+                <input type="hidden" name="data" value="{{ data }}">
+                <button type="submit">Export to CSV</button>
+            </form>
+        </div>
+    {% endif %}
+    
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+</body>
+</html>
